@@ -1,9 +1,9 @@
-import { Button } from '@/shared/ui/Button'
+import { Counter } from '@/entities/Counter'
 
 function App() {
   return (
     <>
-      <Button variant={'destructive'}>Click</Button>
+      <Counter />
     </>
   )
 }
