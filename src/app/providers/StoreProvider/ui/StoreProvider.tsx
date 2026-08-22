@@ -1,22 +1,11 @@
 import { Provider } from 'react-redux'
 import type { ReactNode } from 'react'
-import type { ReducersMapObject } from '@reduxjs/toolkit'
-import { createReduxStore } from '../config/store'
-import type { StateSchema } from '../config/StateSchema'
+import { store } from '../config/store.ts'
 
 interface StoreProviderProps {
-  children?: ReactNode
-  initialState?: DeepPartial<StateSchema>
-  asyncReducers?: DeepPartial<ReducersMapObject<StateSchema>>
+  children: ReactNode
 }
 
-export const StoreProvider = (props: StoreProviderProps) => {
-  const { children, initialState, asyncReducers } = props
-
-  const store = createReduxStore(
-    initialState as StateSchema,
-    asyncReducers as ReducersMapObject<StateSchema>,
-  )
-
+export const StoreProvider = ({ children }: StoreProviderProps) => {
   return <Provider store={store}>{children}</Provider>
 }
