@@ -7,8 +7,7 @@ import {
 import { counterReducer } from '@/entities/Counter'
 import { rtkApi } from '@/shared/api/rtkApi.ts'
 import { createReducerManager } from './reducerManager.ts'
-import { $api } from '@/shared/api/api.ts'
-import type { ReducerManager, StateSchema, ThunkExtraArg } from './StateSchema.ts'
+import type { ReducerManager, StateSchema } from './StateSchema.ts'
 
 export function createReduxStore(): EnhancedStore<StateSchema> & {
   reducerManager: ReducerManager
@@ -20,19 +19,10 @@ export function createReduxStore(): EnhancedStore<StateSchema> & {
 
   const reducerManager = createReducerManager(rootReducers)
 
-  const extraArg: ThunkExtraArg = {
-    api: $api,
-  }
-
   const store = configureStore({
     reducer: reducerManager.reduce as Reducer<StateSchema>,
     devTools: __IS_DEV__,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        thunk: {
-          extraArgument: extraArg,
-        },
-      }).concat(rtkApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(rtkApi.middleware),
   })
 
   return Object.assign(store, { reducerManager })
