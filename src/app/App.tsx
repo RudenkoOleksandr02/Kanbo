@@ -1,11 +1,7 @@
-import { Counter } from '@/entities/Counter'
+import { AppRouter } from './providers/router'
 
 function App() {
-  return (
-    <>
-      <Counter />
-    </>
-  )
+  return <AppRouter />
 }
 
 export default App
