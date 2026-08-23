@@ -1,6 +1,6 @@
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/ui/Card'
 
-interface TaskCardProps {
+export interface TaskCardProps {
   title: string
   description: string
   dueDate: string
