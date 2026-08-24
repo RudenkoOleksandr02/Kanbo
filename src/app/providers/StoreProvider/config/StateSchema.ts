@@ -1,13 +1,10 @@
-import type { CounterSchema } from '@/entities/Counter'
 import { rtkApi } from '@/shared/api/rtkApi.ts'
 import type { UnknownAction, ReducersMapObject, Reducer, EnhancedStore } from '@reduxjs/toolkit'
+import type { LoginSchema } from '@/features/AuthByEmail'
 
 export interface StateSchema {
-  counter: CounterSchema
+  loginForm: LoginSchema
   [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>
-
-  // async reducers
-  /*loginForm?: LoginSchema*/
 }
 
 export type StateSchemaKey = keyof StateSchema

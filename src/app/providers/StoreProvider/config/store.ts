@@ -1,19 +1,12 @@
-import {
-  configureStore,
-  type EnhancedStore,
-  type Reducer,
-  type ReducersMapObject,
-} from '@reduxjs/toolkit'
-import { counterReducer } from '@/entities/Counter'
+import { configureStore, type Reducer, type ReducersMapObject } from '@reduxjs/toolkit'
 import { rtkApi } from '@/shared/api/rtkApi.ts'
 import { createReducerManager } from './reducerManager.ts'
-import type { ReducerManager, StateSchema } from './StateSchema.ts'
+import type { StateSchema } from './StateSchema.ts'
+import { loginReducer } from '@/features/AuthByEmail'
 
-export function createReduxStore(): EnhancedStore<StateSchema> & {
-  reducerManager: ReducerManager
-} {
+export function createReduxStore() {
   const rootReducers: ReducersMapObject<StateSchema> = {
-    counter: counterReducer,
+    loginForm: loginReducer,
     [rtkApi.reducerPath]: rtkApi.reducer,
   }
 
@@ -30,4 +23,4 @@ export function createReduxStore(): EnhancedStore<StateSchema> & {
 
 export const store = createReduxStore()
 
-export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch']
+export type AppDispatch = typeof store.dispatch
