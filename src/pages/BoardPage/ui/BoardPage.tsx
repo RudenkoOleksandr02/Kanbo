@@ -4,29 +4,45 @@ const BoardPage = () => {
   const tasks = [
     {
       id: '1',
-      title: 'title 1',
-      description: 'description 1',
-      dueDate: '31 августа',
+      status: 'Not started',
+      title: 'Take Coco to a vet',
+      dueDate: '4/11',
     },
     {
       id: '2',
-      title: 'title 2',
-      description: 'description 2',
-      dueDate: '29 августа',
+      status: 'In progress',
+      title: 'Taxes 😔',
     },
     {
       id: '3',
-      title: 'title 3',
-      description: 'description 3',
-      dueDate: '25 августа',
+      status: 'Blocked',
+      title: 'Move',
+      description: 'Survive moving places in the pandemic.',
+    },
+    {
+      id: '4',
+      status: 'Done',
+      title: 'Nothing to be done 🙃',
     },
   ]
+  const title = 'Personal'
+  const description = 'A board to keep track of personal tasks.'
+  const statuses = ['Not started', 'In progress', 'Blocked', 'Done']
 
   return (
-    <main>
-      <h1>My board</h1>
-      <div>
-        <TaskColumn title="Доска 1" tasks={tasks} />
+    <main className="p-10">
+      <div className="mb-6 flex flex-col gap-2">
+        <h1 className="text-kanbo-heading text-[32px] font-bold">{title}</h1>
+        <p className="text-kanbo-muted text-sm">{description}</p>
+      </div>
+      <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
+        {statuses.map((status) => (
+          <TaskColumn
+            key={status}
+            title={status}
+            tasks={tasks.filter((task) => task.status === status)}
+          />
+        ))}
       </div>
     </main>
   )

@@ -13,6 +13,6 @@ describe('TaskCard', () => {
 
     expect(screen.getByText('Сделать авторизацию')).toBeInTheDocument()
     expect(screen.getByText('Добавить вход через Supabase')).toBeInTheDocument()
-    expect(screen.getByText('Срок: 25 августа')).toBeInTheDocument()
+    expect(screen.getByText('Due 25 августа')).toBeInTheDocument()
   })
 })

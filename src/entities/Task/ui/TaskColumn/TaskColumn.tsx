@@ -5,35 +5,37 @@ interface TaskColumnItem extends TaskCardProps {
 }
 
 interface TaskColumnProps {
-  title: string
   tasks: TaskColumnItem[]
+  title: string
 }
 
 const TaskColumn = (props: TaskColumnProps) => {
-  const { title, tasks } = props
-
-  if (!tasks.length) {
-    return (
-      <section>
-        <h2>{title}</h2>
-        <p>No tasks</p>
-      </section>
-    )
+  const { tasks, title } = props
+  const statusColorClasses: Record<string, string> = {
+    'Not started': 'bg-status-not-started',
+    'In progress': 'bg-status-in-progress',
+    Blocked: 'bg-status-blocked',
+    Done: 'bg-status-done',
   }
+  const statusColorClass = statusColorClasses[title] ?? 'bg-white'
 
   return (
-    <section>
-      <h2>{title}</h2>
-      {tasks.map((task) => {
-        return (
-          <TaskCard
-            key={task.id}
-            title={task.title}
-            description={task.description}
-            dueDate={task.dueDate}
-          />
-        )
-      })}
+    <section className="m-3 flex max-w-[284px] min-w-[208px] flex-1 flex-col gap-3">
+      <h2 className={`text-kanbo-label w-fit rounded-md px-3 ${statusColorClass}`}>{title}</h2>
+      {tasks.length ? (
+        tasks.map((task) => {
+          return (
+            <TaskCard
+              key={task.id}
+              title={task.title}
+              description={task.description}
+              dueDate={task.dueDate}
+            />
+          )
+        })
+      ) : (
+        <p>No tasks</p>
+      )}
     </section>
   )
 }
