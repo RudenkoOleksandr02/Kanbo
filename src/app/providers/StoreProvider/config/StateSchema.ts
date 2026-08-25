@@ -1,9 +1,11 @@
 import { rtkApi } from '@/shared/api/rtkApi.ts'
 import type { UnknownAction, ReducersMapObject, Reducer, EnhancedStore } from '@reduxjs/toolkit'
 import type { LoginSchema } from '@/features/AuthByEmail'
+import type { UserSchema } from '@/entities/User'
 
 export interface StateSchema {
   loginForm: LoginSchema
+  user: UserSchema
   [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>
 }
 

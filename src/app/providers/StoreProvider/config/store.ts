@@ -3,10 +3,12 @@ import { rtkApi } from '@/shared/api/rtkApi.ts'
 import { createReducerManager } from './reducerManager.ts'
 import type { StateSchema } from './StateSchema.ts'
 import { loginReducer } from '@/features/AuthByEmail'
+import { userReducer } from '@/entities/User'
 
 export function createReduxStore() {
   const rootReducers: ReducersMapObject<StateSchema> = {
     loginForm: loginReducer,
+    user: userReducer,
     [rtkApi.reducerPath]: rtkApi.reducer,
   }
 

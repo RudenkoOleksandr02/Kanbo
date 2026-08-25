@@ -1,4 +1,5 @@
 import { TaskColumn } from '@/entities/Task'
+import { LogoutButton } from '@/features/Logout'
 
 const BoardPage = () => {
   const tasks = [
@@ -34,6 +35,7 @@ const BoardPage = () => {
       <div className="mb-6 flex flex-col gap-2">
         <h1 className="text-kanbo-heading text-[32px] font-bold">{title}</h1>
         <p className="text-kanbo-muted text-sm">{description}</p>
+        <LogoutButton />
       </div>
       <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
         {statuses.map((status) => (
