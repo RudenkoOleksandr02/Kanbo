@@ -2,6 +2,7 @@ import { TaskColumn } from '@/entities/Task'
 import { LogoutButton } from '@/features/Logout'
 import { useGetBoardQuery } from '@/entities/Board'
 import { Button } from '@/shared/ui/Button'
+import { CreateTask } from '@/features/CreateTask'
 
 const BoardPage = () => {
   const { isLoading, isFetching, data: boardData, error, refetch } = useGetBoardQuery()
@@ -20,6 +21,7 @@ const BoardPage = () => {
   if (!boardData) return <div>Board not found</div>
 
   const { title, description, columns } = boardData
+  const initialColumn = columns.find((column) => column.position === 0)
 
   return (
     <main className="p-10">
@@ -27,6 +29,7 @@ const BoardPage = () => {
         <h1 className="text-kanbo-heading text-[32px] font-bold">{title}</h1>
         <p className="text-kanbo-muted text-sm">{description}</p>
         <LogoutButton />
+        {initialColumn && <CreateTask columnId={initialColumn.id} />}
       </div>
       <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
         {columns.map((column) => (

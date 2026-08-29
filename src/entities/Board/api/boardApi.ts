@@ -24,6 +24,7 @@ const boardApi = rtkApi.injectEndpoints({
 
         return { data }
       },
+      providesTags: ['Board'],
     }),
   }),
 })
