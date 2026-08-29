@@ -1,34 +1,25 @@
 import { TaskColumn } from '@/entities/Task'
 import { LogoutButton } from '@/features/Logout'
+import { useGetBoardQuery } from '@/entities/Board'
+import { Button } from '@/shared/ui/Button'
 
 const BoardPage = () => {
-  const tasks = [
-    {
-      id: '1',
-      status: 'Not started',
-      title: 'Take Coco to a vet',
-      dueDate: '4/11',
-    },
-    {
-      id: '2',
-      status: 'In progress',
-      title: 'Taxes 😔',
-    },
-    {
-      id: '3',
-      status: 'Blocked',
-      title: 'Move',
-      description: 'Survive moving places in the pandemic.',
-    },
-    {
-      id: '4',
-      status: 'Done',
-      title: 'Nothing to be done 🙃',
-    },
-  ]
-  const title = 'Personal'
-  const description = 'A board to keep track of personal tasks.'
-  const statuses = ['Not started', 'In progress', 'Blocked', 'Done']
+  const { isLoading, isFetching, data: boardData, error, refetch } = useGetBoardQuery()
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) {
+    return (
+      <div>
+        <p>Failed to load board</p>
+        <Button disabled={isFetching} onClick={() => void refetch()}>
+          Retry
+        </Button>
+      </div>
+    )
+  }
+  if (!boardData) return <div>Board not found</div>
+
+  const { title, description, columns } = boardData
 
   return (
     <main className="p-10">
@@ -38,11 +29,16 @@ const BoardPage = () => {
         <LogoutButton />
       </div>
       <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
-        {statuses.map((status) => (
+        {columns.map((column) => (
           <TaskColumn
-            key={status}
-            title={status}
-            tasks={tasks.filter((task) => task.status === status)}
+            key={column.id}
+            title={column.title}
+            tasks={column.tasks.map((task) => ({
+              id: task.id,
+              title: task.title,
+              description: task.description ?? undefined,
+              dueDate: task.due_date ?? undefined,
+            }))}
           />
         ))}
       </div>
