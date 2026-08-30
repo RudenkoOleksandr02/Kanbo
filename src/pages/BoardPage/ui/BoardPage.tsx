@@ -3,8 +3,11 @@ import { LogoutButton } from '@/features/Logout'
 import { useGetBoardQuery } from '@/entities/Board'
 import { Button } from '@/shared/ui/Button'
 import { CreateTask } from '@/features/CreateTask'
+import { EditTask, type SelectedTask } from '@/features/EditTask'
+import { useState } from 'react'
 
 const BoardPage = () => {
+  const [selectedTask, setSelectedTask] = useState<SelectedTask | null>(null)
   const { isLoading, isFetching, data: boardData, error, refetch } = useGetBoardQuery()
 
   if (isLoading) return <div>Loading...</div>
@@ -30,6 +33,7 @@ const BoardPage = () => {
         <p className="text-kanbo-muted text-sm">{description}</p>
         <LogoutButton />
         {initialColumn && <CreateTask columnId={initialColumn.id} />}
+        {selectedTask && <EditTask task={selectedTask} onClose={() => setSelectedTask(null)} />}
       </div>
       <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
         {columns.map((column) => (
@@ -41,6 +45,12 @@ const BoardPage = () => {
               title: task.title,
               description: task.description ?? undefined,
               dueDate: task.due_date ?? undefined,
+              onEdit: () =>
+                setSelectedTask({
+                  id: task.id,
+                  title: task.title,
+                  description: task.description ?? '',
+                }),
             }))}
           />
         ))}

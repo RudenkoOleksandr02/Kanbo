@@ -7,12 +7,14 @@ const tasks = [
     title: 'Task 1',
     description: 'Description 1',
     dueDate: '25 августа',
+    onEdit: vi.fn(),
   },
   {
     id: '2',
     title: 'Task 2',
     description: 'Description 2',
     dueDate: '29 августа',
+    onEdit: vi.fn(),
   },
 ]
 

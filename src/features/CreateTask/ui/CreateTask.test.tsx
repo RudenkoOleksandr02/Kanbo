@@ -60,7 +60,7 @@ describe('CreateTask', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'Task creation form',
+        name: 'Create task',
       }),
     ).toBeInTheDocument()
   })

@@ -30,6 +30,7 @@ const TaskColumn = (props: TaskColumnProps) => {
               title={task.title}
               description={task.description}
               dueDate={task.dueDate}
+              onEdit={task.onEdit}
             />
           )
         })
