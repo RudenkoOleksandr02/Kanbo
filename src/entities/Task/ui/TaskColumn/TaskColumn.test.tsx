@@ -8,6 +8,7 @@ const tasks = [
     description: 'Description 1',
     dueDate: '25 августа',
     onEdit: vi.fn(),
+    onDelete: vi.fn(),
   },
   {
     id: '2',
@@ -15,6 +16,7 @@ const tasks = [
     description: 'Description 2',
     dueDate: '29 августа',
     onEdit: vi.fn(),
+    onDelete: vi.fn(),
   },
 ]
 

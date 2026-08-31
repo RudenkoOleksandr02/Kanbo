@@ -25,6 +25,10 @@ const EditTask = ({ task, onClose }: EditTaskProps) => {
   })
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && isLoading) {
+      return
+    }
+
     if (!nextOpen) {
       form.reset()
       resetMutation()

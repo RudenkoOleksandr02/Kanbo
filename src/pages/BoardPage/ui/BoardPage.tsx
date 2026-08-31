@@ -5,9 +5,11 @@ import { Button } from '@/shared/ui/Button'
 import { CreateTask } from '@/features/CreateTask'
 import { EditTask, type SelectedTask } from '@/features/EditTask'
 import { useState } from 'react'
+import { DeleteTask } from '@/features/DeleteTask'
 
 const BoardPage = () => {
   const [selectedTask, setSelectedTask] = useState<SelectedTask | null>(null)
+  const [taskIdToDelete, setTaskIdToDelete] = useState<string | null>(null)
   const { isLoading, isFetching, data: boardData, error, refetch } = useGetBoardQuery()
 
   if (isLoading) return <div>Loading...</div>
@@ -34,6 +36,7 @@ const BoardPage = () => {
         <LogoutButton />
         {initialColumn && <CreateTask columnId={initialColumn.id} />}
         {selectedTask && <EditTask task={selectedTask} onClose={() => setSelectedTask(null)} />}
+        <DeleteTask taskId={taskIdToDelete} onClose={() => setTaskIdToDelete(null)} />
       </div>
       <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
         {columns.map((column) => (
@@ -51,6 +54,7 @@ const BoardPage = () => {
                   title: task.title,
                   description: task.description ?? '',
                 }),
+              onDelete: () => setTaskIdToDelete(task.id),
             }))}
           />
         ))}

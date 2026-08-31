@@ -6,6 +6,7 @@ describe('TaskCard', () => {
     render(
       <TaskCard
         onEdit={vi.fn()}
+        onDelete={vi.fn()}
         title="Сделать авторизацию"
         description="Добавить вход через Supabase"
         dueDate="25 августа"

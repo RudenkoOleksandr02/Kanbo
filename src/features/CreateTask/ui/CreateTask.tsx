@@ -37,6 +37,10 @@ const CreateTask = ({ columnId }: { columnId: string }) => {
     <Dialog
       open={open}
       onOpenChange={(nextOpen) => {
+        if (!nextOpen && isLoading) {
+          return
+        }
+
         setOpen(nextOpen)
 
         if (!nextOpen) {

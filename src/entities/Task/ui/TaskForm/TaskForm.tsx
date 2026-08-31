@@ -50,7 +50,7 @@ const TaskForm = (props: TaskFormProps) => {
       <DialogFooter>
         <DialogClose
           render={
-            <Button variant="outline" type="button">
+            <Button variant="outline" type="button" disabled={isLoading}>
               Cancel
             </Button>
           }

@@ -56,6 +56,9 @@ vi.mock('@/features/Logout', () => ({
 vi.mock('@/features/CreateTask', () => ({
   CreateTask: () => null,
 }))
+vi.mock('@/features/DeleteTask', () => ({
+  DeleteTask: () => null,
+}))
 
 describe('BoardPage', () => {
   test('renders board, columns and tasks from query data', () => {
