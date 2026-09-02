@@ -87,4 +87,7 @@ describe('reorderTasks', () => {
   test('throws when the new position exceeds the last index', () => {
     expect(() => reorderTasks(tasksMock, 'task-3', 10)).toThrow(RangeError)
   })
+  test('returns an empty array when tasks are empty', () => {
+    expect(reorderTasks([], 'task-3', 0)).toEqual([])
+  })
 })

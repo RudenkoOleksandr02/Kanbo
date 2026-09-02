@@ -7,8 +7,12 @@ import {
   CardTitle,
 } from '@/shared/ui/Card'
 import { Button } from '@/shared/ui/Button'
+import { useSortable } from '@dnd-kit/react/sortable'
 
 export interface TaskCardProps {
+  id: string
+  index: number
+  columnId: string
   title: string
   onEdit: () => void
   onDelete: () => void
@@ -17,10 +21,17 @@ export interface TaskCardProps {
 }
 
 const TaskCard = (props: TaskCardProps) => {
-  const { title, onEdit, onDelete, description, dueDate } = props
+  const { id, index, columnId, title, onEdit, onDelete, description, dueDate } = props
+  const { ref } = useSortable({
+    id,
+    index,
+    group: columnId,
+    type: `${columnId}:item`,
+    accept: [`${columnId}:item`],
+  })
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" ref={ref}>
       <CardHeader>
         <CardTitle className="text-kanbo-heading">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

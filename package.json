@@ -9,6 +9,7 @@
     "prettier": "prettier --write **/*.{ts,tsx,json,css}",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc -b --noEmit",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",

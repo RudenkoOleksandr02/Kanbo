@@ -22,14 +22,14 @@ const tasks = [
 
 describe('TaskColumn', () => {
   test('renders tasks', () => {
-    render(<TaskColumn title="Not started" tasks={tasks} />)
+    render(<TaskColumn title="Not started" columnId="1" tasks={tasks} />)
 
     expect(screen.getByText('Task 1')).toBeInTheDocument()
     expect(screen.getByText('Task 2')).toBeInTheDocument()
   })
 
   test('renders empty state', () => {
-    render(<TaskColumn title="Done" tasks={[]} />)
+    render(<TaskColumn title="Done" columnId="1" tasks={[]} />)
 
     expect(screen.getByText('No tasks')).toBeInTheDocument()
   })

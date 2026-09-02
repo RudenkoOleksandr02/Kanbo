@@ -5,6 +5,9 @@ describe('TaskCard', () => {
   test('renders task information', () => {
     render(
       <TaskCard
+        id="1"
+        index={0}
+        columnId="1"
         onEdit={vi.fn()}
         onDelete={vi.fn()}
         title="Сделать авторизацию"
