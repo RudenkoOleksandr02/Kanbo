@@ -59,6 +59,9 @@ vi.mock('@/features/CreateTask', () => ({
 vi.mock('@/features/DeleteTask', () => ({
   DeleteTask: () => null,
 }))
+vi.mock('@/features/ReorderTasks', () => ({
+  useSaveTaskOrderMutation: () => [vi.fn(), {}],
+}))
 
 describe('BoardPage', () => {
   test('renders board, columns and tasks from query data', () => {

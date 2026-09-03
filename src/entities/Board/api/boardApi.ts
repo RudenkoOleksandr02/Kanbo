@@ -2,7 +2,7 @@ import { rtkApi } from '@/shared/api/rtkApi.ts'
 import { supabaseClient } from '@/shared/api/supabaseClient.ts'
 import type { BoardData } from '../model/types/board.ts'
 
-const boardApi = rtkApi.injectEndpoints({
+export const boardApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getBoard: build.query<BoardData | null, void>({
       async queryFn() {
@@ -17,6 +17,14 @@ const boardApi = rtkApi.injectEndpoints({
             )
         `,
           )
+          .order('position', {
+            referencedTable: 'columns',
+            ascending: true,
+          })
+          .order('position', {
+            referencedTable: 'columns.tasks',
+            ascending: true,
+          })
           .limit(1)
           .maybeSingle()
 
