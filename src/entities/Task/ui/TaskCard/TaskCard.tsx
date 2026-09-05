@@ -18,16 +18,19 @@ export interface TaskCardProps {
   onDelete: () => void
   description?: string
   dueDate?: string
+  isDragDisabled?: boolean
 }
 
 const TaskCard = (props: TaskCardProps) => {
-  const { id, index, columnId, title, onEdit, onDelete, description, dueDate } = props
+  const { id, index, columnId, title, onEdit, onDelete, description, dueDate, isDragDisabled } =
+    props
   const { ref } = useSortable({
     id,
     index,
     group: columnId,
-    type: `${columnId}:item`,
-    accept: [`${columnId}:item`],
+    type: 'item',
+    accept: ['item'],
+    disabled: isDragDisabled,
   })
 
   return (

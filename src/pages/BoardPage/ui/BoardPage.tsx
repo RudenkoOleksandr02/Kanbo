@@ -1,4 +1,4 @@
-import { reorderTasks, TaskColumn } from '@/entities/Task'
+import { TaskColumn } from '@/entities/Task'
 import { LogoutButton } from '@/features/Logout'
 import { useGetBoardQuery } from '@/entities/Board'
 import { Button } from '@/shared/ui/Button'
@@ -6,15 +6,15 @@ import { CreateTask } from '@/features/CreateTask'
 import { EditTask, type SelectedTask } from '@/features/EditTask'
 import { useState } from 'react'
 import { DeleteTask } from '@/features/DeleteTask'
-import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react'
-import { isSortable } from '@dnd-kit/react/sortable'
-import { useSaveTaskOrderMutation } from '@/features/ReorderTasks'
+import { DragDropProvider } from '@dnd-kit/react'
+import { useTaskDragAndDrop } from '@/features/ReorderTasks'
 
 const BoardPage = () => {
   const [selectedTask, setSelectedTask] = useState<SelectedTask | null>(null)
   const [taskIdToDelete, setTaskIdToDelete] = useState<string | null>(null)
   const { isLoading, isFetching, data: boardData, error, refetch } = useGetBoardQuery()
-  const [saveTaskOrder] = useSaveTaskOrderMutation()
+  const { draftColumns, isSavingTaskOrder, handleDragStart, handleDragOver, handleDragEnd } =
+    useTaskDragAndDrop(boardData?.columns ?? [])
 
   if (isLoading) return <div>Loading...</div>
   if (error) {
@@ -29,34 +29,9 @@ const BoardPage = () => {
   }
   if (!boardData) return <div>Board not found</div>
 
-  const { title, description, columns } = boardData
+  const { title, description } = boardData
+  const columns = draftColumns ?? boardData.columns
   const initialColumn = columns.find((column) => column.position === 0)
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    if (event.canceled) return
-
-    const { source } = event.operation
-
-    if (isSortable(source)) {
-      const { index, initialIndex, id, group, initialGroup } = source
-
-      if (
-        typeof group !== 'string' ||
-        initialGroup !== group ||
-        initialIndex === index ||
-        typeof id !== 'string'
-      )
-        return
-
-      const column = columns.find((column) => column.id === group)
-      if (column) {
-        void saveTaskOrder({
-          columnId: group,
-          tasks: reorderTasks(column.tasks, id, index),
-        })
-      }
-    }
-  }
 
   return (
     <main className="p-10">
@@ -68,13 +43,18 @@ const BoardPage = () => {
         {selectedTask && <EditTask task={selectedTask} onClose={() => setSelectedTask(null)} />}
         <DeleteTask taskId={taskIdToDelete} onClose={() => setTaskIdToDelete(null)} />
       </div>
-      <DragDropProvider onDragEnd={handleDragEnd}>
+      <DragDropProvider
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
         <div className="bg-kanbo-board flex overflow-x-auto rounded-md p-2">
           {columns.map((column) => (
             <TaskColumn
               key={column.id}
               columnId={column.id}
               title={column.title}
+              isDragDisabled={isSavingTaskOrder}
               tasks={column.tasks.map((task) => ({
                 id: task.id,
                 title: task.title,

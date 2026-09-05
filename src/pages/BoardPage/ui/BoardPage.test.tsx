@@ -60,7 +60,13 @@ vi.mock('@/features/DeleteTask', () => ({
   DeleteTask: () => null,
 }))
 vi.mock('@/features/ReorderTasks', () => ({
-  useSaveTaskOrderMutation: () => [vi.fn(), {}],
+  useTaskDragAndDrop: () => ({
+    draftColumns: null,
+    isSavingTaskOrder: false,
+    handleDragStart: vi.fn(),
+    handleDragOver: vi.fn(),
+    handleDragEnd: vi.fn(),
+  }),
 }))
 
 describe('BoardPage', () => {

@@ -3,18 +3,24 @@ import { supabaseClient } from '@/shared/api/supabaseClient.ts'
 import { boardApi } from '@/entities/Board'
 
 type TaskRow = Tables<'tasks'>
-type SaveTaskOrderArgs = {
+type ColumnTaskOrder = {
   columnId: string
   tasks: TaskRow[]
+}
+
+type SaveTaskOrderArgs = {
+  columnOrders: ColumnTaskOrder[]
 }
 
 const saveTaskOrderApi = boardApi.injectEndpoints({
   endpoints: (build) => ({
     saveTaskOrder: build.mutation<TaskRow[], SaveTaskOrderArgs>({
-      async queryFn({ tasks }) {
+      async queryFn({ columnOrders }) {
+        const tasksToSave = columnOrders.flatMap(({ tasks }) => tasks)
+
         const { data, error } = await supabaseClient
           .from('tasks')
-          .upsert(tasks, { onConflict: 'id' })
+          .upsert(tasksToSave, { onConflict: 'id' })
           .select()
 
         if (error) return { error }
@@ -22,16 +28,18 @@ const saveTaskOrderApi = boardApi.injectEndpoints({
         return { data }
       },
 
-      async onQueryStarted({ columnId, tasks }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ columnOrders }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           boardApi.util.updateQueryData('getBoard', undefined, (draft) => {
             if (!draft) return
 
-            const column = draft.columns.find((column) => column.id === columnId)
+            columnOrders.forEach(({ tasks, columnId }) => {
+              const column = draft.columns.find((column) => column.id === columnId)
 
-            if (column) {
-              column.tasks = [...tasks]
-            }
+              if (column) {
+                column.tasks = [...tasks]
+              }
+            })
           }),
         )
 
