@@ -1,1 +1,1 @@
-export { default as BoardPage } from './ui/BoardPage.tsx'
+export { BoardPageAsync as BoardPage } from './ui/BoardPage.async.tsx'
