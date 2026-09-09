@@ -12,13 +12,14 @@ type CreateTaskArgs = TaskFormValues & {
 const createTaskApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     createTask: build.mutation<TaskRow, CreateTaskArgs>({
-      async queryFn({ columnId, title, description }) {
+      async queryFn({ columnId, title, description, dueDate }) {
         const { data, error } = await supabaseClient
           .from('tasks')
           .insert({
             column_id: columnId,
             title,
             description: description || null,
+            due_date: dueDate || null,
           })
           .select()
           .single()

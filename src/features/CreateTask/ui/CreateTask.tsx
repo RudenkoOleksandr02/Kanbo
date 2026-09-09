@@ -16,6 +16,7 @@ const CreateTask = ({ columnId }: { columnId: string }) => {
     defaultValues: {
       title: '',
       description: '',
+      dueDate: '',
     },
   })
 

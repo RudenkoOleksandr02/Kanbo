@@ -7,6 +7,7 @@ const defaultProps = {
     id: '1',
     title: 'title',
     description: 'description',
+    dueDate: '2026-05-05',
   },
   onClose: vi.fn(),
 }
@@ -58,6 +59,7 @@ describe('EditTask', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     expect(screen.getByLabelText('Title')).toHaveValue(defaultProps.task.title)
     expect(screen.getByLabelText('Description')).toHaveValue(defaultProps.task.description)
+    expect(screen.getByLabelText('Due date')).toHaveValue(defaultProps.task.dueDate)
   })
   test('does not submit when title is empty', async () => {
     const user = userEvent.setup()
@@ -75,9 +77,11 @@ describe('EditTask', () => {
 
     await user.clear(screen.getByLabelText('Title'))
     await user.clear(screen.getByLabelText('Description'))
+    await user.clear(screen.getByLabelText('Due date'))
 
     await user.type(screen.getByLabelText('Title'), 'updated title')
     await user.type(screen.getByLabelText('Description'), 'updated description')
+    await user.type(screen.getByLabelText('Due date'), '2026-11-11')
 
     await user.click(screen.getByRole('button', { name: 'Save' }))
 
@@ -86,6 +90,7 @@ describe('EditTask', () => {
         taskId: defaultProps.task.id,
         title: 'updated title',
         description: 'updated description',
+        dueDate: '2026-11-11',
       })
     })
 

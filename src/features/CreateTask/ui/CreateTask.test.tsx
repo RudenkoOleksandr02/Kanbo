@@ -99,8 +99,8 @@ describe('CreateTask', () => {
     )
 
     await user.type(screen.getByLabelText('Title'), 'Learn RTK Query')
-
     await user.type(screen.getByLabelText('Description'), 'Create a task mutation')
+    await user.type(screen.getByLabelText('Due date'), '2026-05-05')
 
     await user.click(
       screen.getByRole('button', {
@@ -113,6 +113,7 @@ describe('CreateTask', () => {
         title: 'Learn RTK Query',
         description: 'Create a task mutation',
         columnId: 'column-1',
+        dueDate: '2026-05-05',
       })
     })
 

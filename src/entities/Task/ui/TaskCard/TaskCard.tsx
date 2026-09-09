@@ -42,7 +42,9 @@ const TaskCard = (props: TaskCardProps) => {
 
       {dueDate && (
         <CardContent>
-          <p className="bg-task-due text-kanbo-label w-fit rounded-md px-2.5">Due {dueDate}</p>
+          <p className="bg-task-due text-kanbo-label w-fit rounded-md px-2.5">
+            Due {dueDate.split('-').reverse().join('.')}
+          </p>
         </CardContent>
       )}
       <CardFooter>

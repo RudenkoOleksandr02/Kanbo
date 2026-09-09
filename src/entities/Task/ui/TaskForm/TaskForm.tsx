@@ -39,6 +39,15 @@ const TaskForm = (props: TaskFormProps) => {
             <p role="alert">{form.formState.errors.description.message}</p>
           )}
         </Field>
+
+        <Field>
+          <Label htmlFor="dueDate">Due date</Label>
+          <Input id="dueDate" type="date" {...form.register('dueDate')} />
+
+          {form.formState.errors.dueDate && (
+            <p role="alert">{form.formState.errors.dueDate.message}</p>
+          )}
+        </Field>
       </FieldGroup>
 
       {isError && (

@@ -97,7 +97,7 @@ describe('BoardPage', () => {
     ).toBeInTheDocument()
 
     expect(screen.getByText('Take Coco to a vet')).toBeInTheDocument()
-    expect(screen.getByText('Due 2026-11-04')).toBeInTheDocument()
+    expect(screen.getByText('Due 04.11.2026')).toBeInTheDocument()
     expect(screen.getByText('No tasks')).toBeInTheDocument()
   })
 })

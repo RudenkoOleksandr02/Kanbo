@@ -12,12 +12,12 @@ describe('TaskCard', () => {
         onDelete={vi.fn()}
         title="Сделать авторизацию"
         description="Добавить вход через Supabase"
-        dueDate="25 августа"
+        dueDate="2026-08-25"
       />,
     )
 
     expect(screen.getByText('Сделать авторизацию')).toBeInTheDocument()
     expect(screen.getByText('Добавить вход через Supabase')).toBeInTheDocument()
-    expect(screen.getByText('Due 25 августа')).toBeInTheDocument()
+    expect(screen.getByText('Due 25.08.2026')).toBeInTheDocument()
   })
 })

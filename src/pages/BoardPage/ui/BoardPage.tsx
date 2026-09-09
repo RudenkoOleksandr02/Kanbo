@@ -65,6 +65,7 @@ const BoardPage = () => {
                     id: task.id,
                     title: task.title,
                     description: task.description ?? '',
+                    dueDate: task.due_date ?? '',
                   }),
                 onDelete: () => setTaskIdToDelete(task.id),
               }))}

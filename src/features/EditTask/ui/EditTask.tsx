@@ -21,6 +21,7 @@ const EditTask = ({ task, onClose }: EditTaskProps) => {
     defaultValues: {
       title: task.title,
       description: task.description,
+      dueDate: task.dueDate,
     },
   })
 
