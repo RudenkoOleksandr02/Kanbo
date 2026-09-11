@@ -8,6 +8,7 @@ import {
 } from '@/shared/ui/Card'
 import { Button } from '@/shared/ui/Button'
 import { useSortable } from '@dnd-kit/react/sortable'
+import type { ReactNode } from 'react'
 
 export interface TaskCardProps {
   id: string
@@ -19,11 +20,22 @@ export interface TaskCardProps {
   description?: string
   dueDate?: string
   isDragDisabled?: boolean
+  labelsSlot?: ReactNode
 }
 
 const TaskCard = (props: TaskCardProps) => {
-  const { id, index, columnId, title, onEdit, onDelete, description, dueDate, isDragDisabled } =
-    props
+  const {
+    id,
+    index,
+    columnId,
+    title,
+    onEdit,
+    onDelete,
+    description,
+    dueDate,
+    isDragDisabled,
+    labelsSlot,
+  } = props
   const { ref } = useSortable({
     id,
     index,
@@ -40,11 +52,15 @@ const TaskCard = (props: TaskCardProps) => {
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
 
-      {dueDate && (
-        <CardContent>
-          <p className="bg-task-due text-kanbo-label w-fit rounded-md px-2.5">
-            Due {dueDate.split('-').reverse().join('.')}
-          </p>
+      {(labelsSlot || dueDate) && (
+        <CardContent className="flex flex-col gap-2">
+          {labelsSlot}
+
+          {dueDate && (
+            <p className="bg-task-due text-kanbo-label w-fit rounded-md px-2.5">
+              Due {dueDate.split('-').reverse().join('.')}
+            </p>
+          )}
         </CardContent>
       )}
       <CardFooter>

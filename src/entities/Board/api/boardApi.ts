@@ -10,12 +10,42 @@ export const boardApi = rtkApi.injectEndpoints({
           .from('boards')
           .select(
             `
-          *,
+            id,
+            owner_id,
+            title,
+            description,
+            created_at,
+            labels (
+              id,
+              board_id,
+              name,
+              color,
+              created_at
+            ),
             columns (
-              *,
-              tasks (*)
+              id,
+              board_id,
+              title,
+              position,
+              created_at,
+              tasks (
+                id,
+                column_id,
+                title,
+                description,
+                due_date,
+                position,
+                created_at,
+                labels (
+                  id,
+                  board_id,
+                  name,
+                  color,
+                  created_at
+                )
+              )
             )
-        `,
+          `,
           )
           .order('position', {
             referencedTable: 'columns',

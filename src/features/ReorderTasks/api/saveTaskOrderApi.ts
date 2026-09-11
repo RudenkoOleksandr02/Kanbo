@@ -1,11 +1,13 @@
 import type { Tables } from '@/shared/types/database.ts'
 import { supabaseClient } from '@/shared/api/supabaseClient.ts'
 import { boardApi } from '@/entities/Board'
+import type { BoardData } from '@/entities/Board'
 
 type TaskRow = Tables<'tasks'>
+type BoardTask = BoardData['columns'][number]['tasks'][number]
 type ColumnTaskOrder = {
   columnId: string
-  tasks: TaskRow[]
+  tasks: BoardTask[]
 }
 
 type SaveTaskOrderArgs = {
@@ -16,7 +18,17 @@ const saveTaskOrderApi = boardApi.injectEndpoints({
   endpoints: (build) => ({
     saveTaskOrder: build.mutation<TaskRow[], SaveTaskOrderArgs>({
       async queryFn({ columnOrders }) {
-        const tasksToSave = columnOrders.flatMap(({ tasks }) => tasks)
+        const tasksToSave: TaskRow[] = columnOrders.flatMap(({ tasks }) =>
+          tasks.map(({ id, column_id, title, description, due_date, position, created_at }) => ({
+            id,
+            column_id,
+            title,
+            description,
+            due_date,
+            position,
+            created_at,
+          })),
+        )
 
         const { data, error } = await supabaseClient
           .from('tasks')

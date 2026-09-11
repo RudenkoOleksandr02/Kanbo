@@ -29,6 +29,14 @@ vi.mock('@dnd-kit/react/sortable', async (importOriginal) => {
   }
 })
 
+const taskLabelMock = {
+  id: '11111111-1111-4111-8111-111111111111',
+  board_id: 'board-1',
+  name: 'Backend',
+  color: 'blue',
+  created_at: '2026-09-10T00:00:00.000Z',
+} as const
+
 const columnsMock = [
   {
     id: 'column-1',
@@ -45,6 +53,7 @@ const columnsMock = [
         due_date: null,
         position: 0,
         created_at: '2026-09-05T00:00:00.000Z',
+        labels: [],
       },
       {
         id: 'task-2',
@@ -54,6 +63,7 @@ const columnsMock = [
         due_date: null,
         position: 1,
         created_at: '2026-09-05T00:00:00.000Z',
+        labels: [taskLabelMock],
       },
     ],
   },
@@ -72,6 +82,7 @@ const columnsMock = [
         due_date: null,
         position: 0,
         created_at: '2026-09-05T00:00:00.000Z',
+        labels: [],
       },
     ],
   },
@@ -356,5 +367,39 @@ describe('useTaskDragAndDrop', () => {
     expect(result.current.draftColumns).toBeNull()
     expect(preventDefaultMock).not.toHaveBeenCalled()
     expect(saveTaskOrderMock).not.toHaveBeenCalled()
+  })
+  test('preserves task labels when moving between columns', () => {
+    const dragOverEvent = {
+      preventDefault: vi.fn(),
+      operation: {
+        source: {
+          id: 'task-2',
+          index: 1,
+          group: 'column-1',
+        },
+        target: {
+          id: 'task-3',
+          index: 0,
+          group: 'column-2',
+        },
+      },
+    } as unknown as DragOverEvent
+
+    const { result } = renderHook(() => useTaskDragAndDrop(columnsMock))
+
+    act(() => {
+      result.current.handleDragStart()
+    })
+
+    act(() => {
+      result.current.handleDragOver(dragOverEvent)
+    })
+
+    const movedTask = result.current.draftColumns
+      ?.flatMap((column) => column.tasks)
+      .find((task) => task.id === 'task-2')
+
+    expect(movedTask?.column_id).toBe('column-2')
+    expect(movedTask?.labels).toEqual([taskLabelMock])
   })
 })

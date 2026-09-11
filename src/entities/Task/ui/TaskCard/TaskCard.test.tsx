@@ -20,4 +20,19 @@ describe('TaskCard', () => {
     expect(screen.getByText('Добавить вход через Supabase')).toBeInTheDocument()
     expect(screen.getByText('Due 25.08.2026')).toBeInTheDocument()
   })
+  test('renders the labels slot', () => {
+    render(
+      <TaskCard
+        id="1"
+        index={0}
+        columnId="column-1"
+        title="Task"
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+        labelsSlot={<span>Backend</span>}
+      />,
+    )
+
+    expect(screen.getByText('Backend')).toBeInTheDocument()
+  })
 })

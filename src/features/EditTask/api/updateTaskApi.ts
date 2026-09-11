@@ -11,16 +11,15 @@ type UpdateTaskArgs = TaskFormValues & {
 const updateTaskApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     updateTask: build.mutation<TaskRow, UpdateTaskArgs>({
-      async queryFn({ taskId, title, description, dueDate }) {
+      async queryFn({ taskId, title, description, dueDate, labelIds }) {
         const { data, error } = await supabaseClient
-          .from('tasks')
-          .update({
-            title,
-            description: description || null,
-            due_date: dueDate || null,
+          .rpc('update_task_with_labels', {
+            p_task_id: taskId,
+            p_title: title,
+            p_description: description || null,
+            p_due_date: dueDate || null,
+            p_label_ids: labelIds,
           })
-          .eq('id', taskId)
-          .select()
           .single()
 
         if (error) return { error }

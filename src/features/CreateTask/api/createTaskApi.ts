@@ -12,16 +12,15 @@ type CreateTaskArgs = TaskFormValues & {
 const createTaskApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     createTask: build.mutation<TaskRow, CreateTaskArgs>({
-      async queryFn({ columnId, title, description, dueDate }) {
+      async queryFn({ columnId, title, description, dueDate, labelIds }) {
         const { data, error } = await supabaseClient
-          .from('tasks')
-          .insert({
-            column_id: columnId,
-            title,
-            description: description || null,
-            due_date: dueDate || null,
+          .rpc('create_task_with_labels', {
+            p_column_id: columnId,
+            p_title: title,
+            p_description: description || null,
+            p_due_date: dueDate || null,
+            p_label_ids: labelIds,
           })
-          .select()
           .single()
 
         if (error) return { error }

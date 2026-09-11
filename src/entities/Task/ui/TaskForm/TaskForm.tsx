@@ -3,20 +3,43 @@ import { Field, FieldGroup } from '@/shared/ui/Field'
 import { Label } from '@/shared/ui/Label'
 import { Input } from '@/shared/ui/Input'
 import { Button } from '@/shared/ui/Button'
-import { type UseFormReturn } from 'react-hook-form'
+import { Controller, type UseFormReturn } from 'react-hook-form'
 import type { TaskFormValues } from '../../model/schema/taskFormSchema'
+import type { ReactNode } from 'react'
+
+export interface TaskLabelsFieldProps {
+  selectedLabelIds: string[]
+  onSelectedLabelIdsChange: (labelIds: string[]) => void
+  disabled?: boolean
+  onBusyChange: (isBusy: boolean) => void
+}
+
+export type RenderTaskLabelsField = (props: TaskLabelsFieldProps) => ReactNode
 
 interface TaskFormProps {
   form: UseFormReturn<TaskFormValues>
   onSubmit: (data: TaskFormValues) => Promise<void>
   isError: boolean
-  isLoading: boolean
+  isSubmitting: boolean
+  isBusy: boolean
   dialogTitle: string
   errorMessage: string
+  renderLabelsField: RenderTaskLabelsField
+  onLabelsBusyChange: (isBusy: boolean) => void
 }
 
 const TaskForm = (props: TaskFormProps) => {
-  const { form, onSubmit, isError, isLoading, dialogTitle, errorMessage } = props
+  const {
+    form,
+    onSubmit,
+    isError,
+    isSubmitting,
+    isBusy,
+    dialogTitle,
+    errorMessage,
+    renderLabelsField,
+    onLabelsBusyChange,
+  } = props
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -48,6 +71,25 @@ const TaskForm = (props: TaskFormProps) => {
             <p role="alert">{form.formState.errors.dueDate.message}</p>
           )}
         </Field>
+
+        <Field>
+          <p className="text-sm font-medium">Labels</p>
+
+          <Controller
+            control={form.control}
+            name="labelIds"
+            render={({ field }) => (
+              <>
+                {renderLabelsField({
+                  selectedLabelIds: field.value,
+                  onSelectedLabelIdsChange: field.onChange,
+                  disabled: isBusy,
+                  onBusyChange: onLabelsBusyChange,
+                })}
+              </>
+            )}
+          />
+        </Field>
       </FieldGroup>
 
       {isError && (
@@ -59,13 +101,13 @@ const TaskForm = (props: TaskFormProps) => {
       <DialogFooter>
         <DialogClose
           render={
-            <Button variant="outline" type="button" disabled={isLoading}>
+            <Button variant="outline" type="button" disabled={isBusy}>
               Cancel
             </Button>
           }
         />
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save'}
+        <Button type="submit" disabled={isBusy}>
+          {isSubmitting ? 'Saving...' : 'Save'}
         </Button>
       </DialogFooter>
     </form>

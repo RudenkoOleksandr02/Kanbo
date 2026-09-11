@@ -23,6 +23,8 @@ vi.mock('../api/createTaskApi.ts', () => ({
   ],
 }))
 
+const LABEL_ID = '11111111-1111-4111-8111-111111111111'
+
 describe('CreateTask', () => {
   beforeEach(() => {
     createTaskMock.mockReset()
@@ -46,7 +48,7 @@ describe('CreateTask', () => {
   test('opens the dialog when Add Task is clicked', async () => {
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
@@ -68,7 +70,7 @@ describe('CreateTask', () => {
   test('does not submit when title is empty', async () => {
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -90,7 +92,7 @@ describe('CreateTask', () => {
   test('submits task data with column id', async () => {
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -114,6 +116,7 @@ describe('CreateTask', () => {
         description: 'Create a task mutation',
         columnId: 'column-1',
         dueDate: '2026-05-05',
+        labelIds: [],
       })
     })
 
@@ -124,7 +127,7 @@ describe('CreateTask', () => {
   test('closes the dialog and resets the form after successful creation', async () => {
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -165,7 +168,7 @@ describe('CreateTask', () => {
 
     unwrapMock.mockRejectedValueOnce(backendError)
 
-    const { rerender } = render(<CreateTask columnId="column-1" />)
+    const { rerender } = render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -187,7 +190,7 @@ describe('CreateTask', () => {
 
     mutationState.isError = true
 
-    rerender(<CreateTask columnId="column-1" />)
+    rerender(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     expect(screen.getByRole('dialog')).toBeInTheDocument()
 
@@ -201,7 +204,7 @@ describe('CreateTask', () => {
 
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -216,10 +219,32 @@ describe('CreateTask', () => {
     ).toBeDisabled()
   })
 
+  test('disables form actions while creating a label', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <CreateTask
+        columnId="column-1"
+        renderLabelsField={({ onBusyChange }) => (
+          <button type="button" onClick={() => onBusyChange(true)}>
+            Start creating label
+          </button>
+        )}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Add Task' }))
+    await user.click(screen.getByRole('button', { name: 'Start creating label' }))
+
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+  })
+
   test('closes the dialog without submitting when Cancel is clicked', async () => {
     const user = userEvent.setup()
 
-    render(<CreateTask columnId="column-1" />)
+    render(<CreateTask columnId="column-1" renderLabelsField={() => null} />)
 
     await user.click(
       screen.getByRole('button', {
@@ -249,5 +274,34 @@ describe('CreateTask', () => {
     )
 
     expect(screen.getByLabelText('Title')).toHaveValue('')
+  })
+  test('submits the selected label ids', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <CreateTask
+        columnId="column-1"
+        renderLabelsField={({ onSelectedLabelIdsChange }) => (
+          <button type="button" onClick={() => onSelectedLabelIdsChange([LABEL_ID])}>
+            Select Backend
+          </button>
+        )}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Add Task' }))
+    await user.click(screen.getByRole('button', { name: 'Select Backend' }))
+    await user.type(screen.getByLabelText('Title'), 'Task with label')
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(createTaskMock).toHaveBeenCalledWith({
+        columnId: 'column-1',
+        title: 'Task with label',
+        description: '',
+        dueDate: '',
+        labelIds: [LABEL_ID],
+      })
+    })
   })
 })

@@ -2,11 +2,11 @@ import type { Tables } from '@/shared/types/database.ts'
 
 type TaskRow = Tables<'tasks'>
 
-export const reorderTasks = (
-  tasks: readonly TaskRow[],
+export const reorderTasks = <T extends TaskRow>(
+  tasks: readonly T[],
   movedTaskId: TaskRow['id'],
   newPosition: TaskRow['position'],
-): TaskRow[] => {
+): T[] => {
   const movedTaskIndex = tasks.findIndex((task) => task.id === movedTaskId)
 
   if (movedTaskIndex === -1) return [...tasks]

@@ -8,8 +8,10 @@ const defaultProps = {
     title: 'title',
     description: 'description',
     dueDate: '2026-05-05',
+    labelIds: [],
   },
   onClose: vi.fn(),
+  renderLabelsField: () => null,
 }
 
 const { updateTaskMock, mutationState, resetMutationMock, unwrapMock } = vi.hoisted(() => ({
@@ -32,6 +34,8 @@ vi.mock('../api/updateTaskApi.ts', () => ({
     },
   ],
 }))
+
+const LABEL_ID = '11111111-1111-4111-8111-111111111111'
 
 describe('EditTask', () => {
   beforeEach(() => {
@@ -91,6 +95,7 @@ describe('EditTask', () => {
         title: 'updated title',
         description: 'updated description',
         dueDate: '2026-11-11',
+        labelIds: [],
       })
     })
 
@@ -151,5 +156,47 @@ describe('EditTask', () => {
       expect(resetMutationMock).toHaveBeenCalledTimes(1)
     })
     expect(updateTaskMock).not.toHaveBeenCalled()
+  })
+  test('submits the updated label ids', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <EditTask
+        {...defaultProps}
+        task={{
+          ...defaultProps.task,
+          labelIds: [LABEL_ID],
+        }}
+        renderLabelsField={({ selectedLabelIds, onSelectedLabelIdsChange }) => (
+          <button type="button" onClick={() => onSelectedLabelIdsChange([])}>
+            Remove selected labels: {selectedLabelIds.join(',')}
+          </button>
+        )}
+      />,
+    )
+
+    expect(
+      screen.getByRole('button', {
+        name: `Remove selected labels: ${LABEL_ID}`,
+      }),
+    ).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole('button', {
+        name: `Remove selected labels: ${LABEL_ID}`,
+      }),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(updateTaskMock).toHaveBeenCalledWith({
+        taskId: defaultProps.task.id,
+        title: defaultProps.task.title,
+        description: defaultProps.task.description,
+        dueDate: defaultProps.task.dueDate,
+        labelIds: [],
+      })
+    })
   })
 })

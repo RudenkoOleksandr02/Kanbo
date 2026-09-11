@@ -2,6 +2,13 @@ import TaskCard, { type TaskCardProps } from '../TaskCard/TaskCard.tsx'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { useDroppable } from '@dnd-kit/react'
 
+const STATUS_COLOR_CLASSES: Record<string, string> = {
+  'Not started': 'bg-status-not-started',
+  'In progress': 'bg-status-in-progress',
+  Blocked: 'bg-status-blocked',
+  Done: 'bg-status-done',
+}
+
 interface TaskColumnProps {
   tasks: Omit<TaskCardProps, 'index' | 'columnId' | 'isDragDisabled'>[]
   title: string
@@ -19,13 +26,7 @@ const TaskColumn = (props: TaskColumnProps) => {
     disabled: isDragDisabled,
   })
 
-  const statusColorClasses: Record<string, string> = {
-    'Not started': 'bg-status-not-started',
-    'In progress': 'bg-status-in-progress',
-    Blocked: 'bg-status-blocked',
-    Done: 'bg-status-done',
-  }
-  const statusColorClass = statusColorClasses[title] ?? 'bg-white'
+  const statusColorClass = STATUS_COLOR_CLASSES[title] ?? 'bg-white'
 
   return (
     <section className="m-3 flex max-w-[284px] min-w-[208px] flex-1 flex-col gap-3">
@@ -35,14 +36,9 @@ const TaskColumn = (props: TaskColumnProps) => {
           tasks.map((task, index) => (
             <TaskCard
               key={task.id}
-              id={task.id}
+              {...task}
               index={index}
               columnId={columnId}
-              title={task.title}
-              description={task.description}
-              dueDate={task.dueDate}
-              onEdit={task.onEdit}
-              onDelete={task.onDelete}
               isDragDisabled={isDragDisabled}
             />
           ))

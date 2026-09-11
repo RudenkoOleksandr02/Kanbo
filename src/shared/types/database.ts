@@ -84,6 +84,68 @@ export type Database = {
           },
         ]
       }
+      labels: {
+        Row: {
+          board_id: string
+          color: Database['public']['Enums']['label_color']
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          board_id: string
+          color: Database['public']['Enums']['label_color']
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          board_id?: string
+          color?: Database['public']['Enums']['label_color']
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'labels_board_id_fkey'
+            columns: ['board_id']
+            isOneToOne: false
+            referencedRelation: 'boards'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      task_labels: {
+        Row: {
+          label_id: string
+          task_id: string
+        }
+        Insert: {
+          label_id: string
+          task_id: string
+        }
+        Update: {
+          label_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'task_labels_label_id_fkey'
+            columns: ['label_id']
+            isOneToOne: false
+            referencedRelation: 'labels'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'task_labels_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       tasks: {
         Row: {
           column_id: string
@@ -127,10 +189,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_task_with_labels: {
+        Args: {
+          p_column_id: string
+          p_description?: string | null
+          p_due_date?: string | null
+          p_label_ids?: string[] | null
+          p_title: string
+        }
+        Returns: Database['public']['Tables']['tasks']['Row'][]
+      }
+      update_task_with_labels: {
+        Args: {
+          p_description?: string | null
+          p_due_date?: string | null
+          p_label_ids?: string[] | null
+          p_task_id: string
+          p_title: string
+        }
+        Returns: Database['public']['Tables']['tasks']['Row'][]
+      }
     }
     Enums: {
-      [_ in never]: never
+      label_color: 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -254,6 +335,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      label_color: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+    },
   },
 } as const

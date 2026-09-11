@@ -1,8 +1,14 @@
 import { Dialog, DialogContent } from '@/shared/ui/Dialog'
-import { TaskForm, taskFormSchema, type TaskFormValues } from '@/entities/Task'
+import {
+  type RenderTaskLabelsField,
+  TaskForm,
+  taskFormSchema,
+  type TaskFormValues,
+} from '@/entities/Task'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUpdateTaskMutation } from '../api/updateTaskApi.ts'
+import { useState } from 'react'
 
 export type SelectedTask = TaskFormValues & {
   id: string
@@ -11,10 +17,16 @@ export type SelectedTask = TaskFormValues & {
 interface EditTaskProps {
   task: SelectedTask
   onClose: () => void
+  renderLabelsField: RenderTaskLabelsField
 }
 
-const EditTask = ({ task, onClose }: EditTaskProps) => {
-  const [updateTask, { isLoading, isError, reset: resetMutation }] = useUpdateTaskMutation()
+const EditTask = (props: EditTaskProps) => {
+  const { task, onClose, renderLabelsField } = props
+  const [isCreatingLabel, setIsCreatingLabel] = useState(false)
+  const [updateTask, { isLoading: isSubmitting, isError, reset: resetMutation }] =
+    useUpdateTaskMutation()
+
+  const isBusy = isSubmitting || isCreatingLabel
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -22,19 +34,21 @@ const EditTask = ({ task, onClose }: EditTaskProps) => {
       title: task.title,
       description: task.description,
       dueDate: task.dueDate,
+      labelIds: task.labelIds,
     },
   })
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && isLoading) {
-      return
-    }
+  const closeDialog = () => {
+    form.reset()
+    resetMutation()
+    setIsCreatingLabel(false)
+    onClose()
+  }
 
-    if (!nextOpen) {
-      form.reset()
-      resetMutation()
-      onClose()
-    }
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && isBusy) return
+
+    if (!nextOpen) closeDialog()
   }
 
   const onEditSubmit = async (values: TaskFormValues) => {
@@ -44,7 +58,7 @@ const EditTask = ({ task, onClose }: EditTaskProps) => {
         taskId: task.id,
       }).unwrap()
 
-      handleOpenChange(false)
+      closeDialog()
     } catch (caughtError) {
       console.error(caughtError)
     }
@@ -52,14 +66,17 @@ const EditTask = ({ task, onClose }: EditTaskProps) => {
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm" showCloseButton={!isBusy}>
         <TaskForm
           form={form}
           onSubmit={onEditSubmit}
           isError={isError}
-          isLoading={isLoading}
+          isSubmitting={isSubmitting}
+          isBusy={isBusy}
           dialogTitle="Edit task"
           errorMessage="Failed to update task. Please try again."
+          renderLabelsField={renderLabelsField}
+          onLabelsBusyChange={setIsCreatingLabel}
         />
       </DialogContent>
     </Dialog>
